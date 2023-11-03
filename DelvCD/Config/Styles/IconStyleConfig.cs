@@ -57,6 +57,10 @@ namespace DelvCD.Config
 
         public ConfigColor IconColor = new ConfigColor(1, 0, 0, 1);
 
+        // Dynamic Group Vars
+        public bool IsDynamic = false;
+        public bool IsParentDynamic = false;
+
         public IConfigPage GetDefault() => new IconStyleConfig();
 
 
@@ -198,8 +202,19 @@ namespace DelvCD.Config
                         IconColor.Vector = vector;
                     }
 
+                    ImGui.NewLine();
                     DrawHelpers.DrawSpacing(1);
-                    ImGui.DragFloat2("Position", ref Position, 1, -_screenSize.X / 2, _screenSize.X / 2);
+                    ImGui.Checkbox("Allow Dynamic Repositioning", ref IsDynamic);
+                    if (IsParentDynamic && !IsDynamic) { ImGui.TextDisabled("Dynamic repositioning is enabled in the Group's settings, but this element will not be repositioned."); }
+                    if (!IsParentDynamic && IsDynamic) { ImGui.TextDisabled("Dynamic repositioning is disallowed in the Group's settings."); }
+                    if (IsDynamic && IsParentDynamic)
+                    {
+                        ImGui.TextDisabled("Postion is currently controlled by the Group's settings.");
+                    }
+                    else
+                    {
+                        ImGui.DragFloat2("Position", ref Position, 1, -_screenSize.X / 2, _screenSize.X / 2);
+                    }
                     ImGui.DragFloat2("Icon Size", ref Size, 1, 0, _screenSize.Y);
 
                     if (IconOption < 2)

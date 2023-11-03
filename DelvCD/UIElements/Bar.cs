@@ -4,6 +4,7 @@ using DelvCD.Helpers.DataSources;
 using ImGuiNET;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Numerics;
 using System.Text.Json.Serialization;
@@ -359,6 +360,48 @@ namespace DelvCD.UIElements
             }
 
             return bars;
+        }
+
+        public void MakeDynamic(bool conditions)
+        {
+            BarStyleConfig.IsDynamic = true;
+
+            if (conditions)
+            {
+                foreach (var condition in StyleConditions.Conditions)
+                {
+                    condition.Style.IsDynamic = true;
+                }
+            }
+        }
+        public void MakeParentDynamic(bool conditions, bool toggle)
+        {
+            BarStyleConfig.IsParentDynamic = toggle;
+
+            if (conditions)
+            {
+                foreach (var condition in StyleConditions.Conditions)
+                {
+                    condition.Style.IsParentDynamic = toggle;
+                }
+            }
+        }
+
+        public void Reposition(Vector2 pos, bool conditions, int elementCount)
+        {
+            if (BarStyleConfig.IsDynamic == true)
+            {
+                pos = new Vector2((pos.X * elementCount), (pos.Y * elementCount));
+                BarStyleConfig.Position = pos;
+
+                if (conditions)
+                {
+                    foreach (var condition in StyleConditions.Conditions)
+                    {
+                        condition.Style.Position = pos;
+                    }
+                }
+            }
         }
 
         public void Resize(Vector2 size, bool conditions)

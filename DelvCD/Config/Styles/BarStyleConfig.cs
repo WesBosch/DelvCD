@@ -57,6 +57,10 @@ namespace DelvCD.Config
         public ConfigColor GlowColor = new ConfigColor(230f / 255f, 150f / 255f, 0f / 255f, 1f);
         public ConfigColor GlowColor2 = new ConfigColor(0f / 255f, 0f / 255f, 0f / 255f, 0f);
 
+        // Dynamic Group Vars
+        public bool IsDynamic = false;
+        public bool IsParentDynamic = false;
+
         public IConfigPage GetDefault() => new BarStyleConfig();
 
 
@@ -116,7 +120,17 @@ namespace DelvCD.Config
 
                 // base config
                 ImGui.NewLine();
-                ImGui.DragFloat2("Position", ref Position, 1, -_screenSize.X / 2, _screenSize.X / 2);
+                ImGui.Checkbox("Allow Dynamic Repositioning", ref IsDynamic);
+                if (IsParentDynamic && !IsDynamic) { ImGui.TextDisabled("Dynamic repositioning is enabled in the Group's settings, but this element will not be repositioned."); }
+                if (!IsParentDynamic && IsDynamic) { ImGui.TextDisabled("Dynamic repositioning is disallowed in the Group's settings."); }
+                if (IsDynamic && IsParentDynamic)
+                {
+                    ImGui.TextDisabled("This element's postion is currently controlled by the Group's settings.");
+                }
+                else
+                {
+                    ImGui.DragFloat2("Position", ref Position, 1, -_screenSize.X / 2, _screenSize.X / 2);
+                }
                 ImGui.DragFloat2("Size", ref Size, 1, 0, _screenSize.Y);
 
                 ImGui.Combo("Fill Direction", ref Unsafe.As<BarDirection, int>(ref Direction), _directionOptions, _directionOptions.Length);
@@ -211,6 +225,7 @@ namespace DelvCD.Config
                         IncompleteChunkColor.Vector = vector;
                     }
                 }
+                if (!Chunked) { ChunkStylesIndex = 0; }
 
                 // glow
                 ImGui.NewLine();

@@ -304,6 +304,50 @@ namespace DelvCD.UIElements
 
             ImGui.PopClipRect();
         }
+
+        public void MakeDynamic(bool conditions)
+        {
+            IconStyleConfig.IsDynamic = true;
+
+            if (conditions)
+            {
+                foreach (var condition in StyleConditions.Conditions)
+                {
+                    condition.Style.IsDynamic = true;
+                }
+            }
+        }
+
+        public void MakeParentDynamic(bool conditions, bool toggle)
+        {
+            IconStyleConfig.IsParentDynamic = toggle;
+
+            if (conditions)
+            {
+                foreach (var condition in StyleConditions.Conditions)
+                {
+                    condition.Style.IsParentDynamic = toggle;
+                }
+            }
+        }
+
+        public void Reposition(Vector2 pos, bool conditions, int elementCount)
+        {
+            if (IconStyleConfig.IsDynamic == true)
+            {
+                pos = new Vector2((pos.X * elementCount), (pos.Y * elementCount));
+                IconStyleConfig.Position = pos;
+
+                if (conditions)
+                {
+                    foreach (var condition in StyleConditions.Conditions)
+                    {
+                        condition.Style.Position = pos;
+                    }
+                }
+            }
+        }
+
         public void Resize(Vector2 size, bool conditions)
         {
             IconStyleConfig.Size = size;
@@ -322,14 +366,14 @@ namespace DelvCD.UIElements
             IconStyleConfig.Position *= scaleFactor;
 
             if (!positionOnly)
-                IconStyleConfig.Size *= scaleFactor;
+            { IconStyleConfig.Size *= scaleFactor; }
 
             foreach (var condition in StyleConditions.Conditions)
             {
                 condition.Style.Position *= scaleFactor;
 
                 if (!positionOnly)
-                    condition.Style.Size *= scaleFactor;
+                { condition.Style.Size *= scaleFactor; }
             }
         }
 
